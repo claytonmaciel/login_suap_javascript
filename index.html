@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cliente SUAP Javascript</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+  </head>
+  <body>
+		<section class="hero is-link is-bold">
+	    <div class="hero-body">
+	      <div class="container">
+	        <h1 class="title">Dados de Login</h1>
+	      </div>
+	    </div>
+	  </section>
+  	<section class="section">
+		  <div class="container">
+	  		
+		  	<div class="is-authenticated content">
+		  		<p><button type="button" class="button is-danger" id="suap-logout-button">Encerrar Sessão</button></p>
+					<br>
+					<div>
+						<p><strong>Identificação: </strong> <span id="ident"></span></p>
+			  		<p><strong>Nome:</strong> <span id="nome"></span></p>
+			  		<p><strong>Email:</strong> <span id="email"></span></p>
+			  		<p><strong>Campus:</strong> <span id="campus"></span></p>
+					</div>
+
+	  		</div>
+		  </div>
+	  </section>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="js.cookie.js"></script>
+		<script src="settings.js"></script>
+  	<script src="client.js"></script>
+    <script>
+      var suap = new SuapClient(SUAP_URL, CLIENT_ID, REDIRECT_URI, SCOPE);
+      suap.init();
+      $(document).ready(function () {
+      		//$("#suap-login-button").attr('href', suap.getLoginURL());
+          if (suap.isAuthenticated()) {
+              var scope = suap.getToken().getScope();
+              var callback = function (response) {
+                  //$("#ident").text(JSON.stringify(response, null, 4)); //aqui vai mostrar todos os dados possíveis.
+                  $("#ident").text(response.identificacao);
+                  $("#nome").text(response.nome);
+									$("#email").text(response.email);
+                  $("#campus").text(response.campus);
+                  //aqui você vai adicionando os outros campos possíveis.
+              };
+             suap.getResource(scope, callback);
+          } else {
+          	  suap.logout();
+              window.location.href = "login.html";
+          }
+      });
+      $("#suap-logout-button").click(function(){
+          suap.logout();
+          window.location.href = "login.html";
+      });      
+    </script>
+  </body>
+</html>
